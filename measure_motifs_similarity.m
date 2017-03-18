@@ -1,0 +1,88 @@
+function [D,Dscaled,pval,qval,motif1_num,motif2_num] = measure_motifs_similarity(PWM_motif1,PWM_motif2,varargin)
+
+% In this function we estimate the similarity and its significance (P-value) between two sets of motifs. The 
+% similarity is taken to be one minus the Shannon-Jensen distance. More specifically we follow the procedure 
+% presented in Itzkovitz et al. 2006, "Coding limits on the number of transcription factors".
+
+% Input:
+% -----
+% PWM_motif1: is a cell array of Position Weight Matrix (PWM) of the first motif set. Its length is the number of 
+% motifs. Each cell is an n X m matrix, where the number of row is the number of different options each element 
+% can have (for example, for nucleotides there are 4 options (A, T, C, and G)), and the number of columns is the 
+% number of the motif's base number. In each column, we have the probability for each element kind to be in this 
+% position. The sum of each column must give 1.
+% PWM_motif2: is a cell array of Position Weight Matrix (PWM) of the second
+% motif set. Its structure is exactly as the motif1 structure, though its length may be different.
+
+% Output:
+% D: the similarity n X m matrix, where n is for the different motifs in set 1 and m is for the different motifs 
+% in set 1.
+% Dscaled: is the scaled similarity between motifs1 and motifs2 by the minimum of their self similarity. 
+% pval and qval: are the significance of the values in the D matrix in P-values and q-values, respectively.
+% motif1_num,motif2_num: the indexes of the motifs in the first and second sets that where found significantly 
+% similar to each other.  
+
+
+%% Setting default values
+% only want 3 optional inputs at most
+numvarargs = length(varargin);
+
+% set defaults for optional inputs
+optargs = {1e4 1 0.7 0.1};
+
+% now put these defaults into the valuesToUse cell array, 
+% and overwrite the ones specified in varargin.
+optargs(1:numvarargs) = varargin;
+
+% Place optional args in memorable variable names
+[Nsim, Sim_flag, Dscaled_thresh, qvalue_thresh] = optargs{:};
+%%
+
+N_PWM_motif1 = length(PWM_motif1);
+N_PWM_motif2 = length(PWM_motif2);
+
+% Estimating the self similarity of motif1.
+Dself_PWM_motif1 = zeros(1,N_PWM_motif1);
+for ind_motif1 = 1:N_PWM_motif1
+    Dself_PWM_motif1(ind_motif1) = compare_two_PSSMs(PWM_motif1{ind_motif1},PWM_motif1{ind_motif1});
+end
+
+% Estimating the self similarity of motif2.
+Dself_PWM_motif2 = zeros(1,N_PWM_motif2);
+for ind_motif2 = 1:N_PWM_motif2
+    Dself_PWM_motif2(ind_motif2) = compare_two_PSSMs(PWM_motif2{ind_motif2},PWM_motif2{ind_motif2});
+end
+
+D_sim = zeros(1,Nsim);
+for ind_motif2 = 1:N_PWM_motif2
+    for ind_motif1 = 1:N_PWM_motif1
+        
+        D(ind_motif2,ind_motif1) = compare_two_PSSMs(PWM_motif1{ind_motif1},PWM_motif2{ind_motif2});
+        clear D_sim Dscaled_sim
+        for ind_sim = 1:Nsim
+            PWM_motif1_sim = make_PWM_realization(PWM_motif1{ind_motif1},Sim_flag);
+            PWM_motif2_sim = make_PWM_realization(PWM_motif2{ind_motif2},Sim_flag);
+            D_sim(ind_sim) = compare_two_PSSMs(PWM_motif1_sim,PWM_motif2_sim);
+            
+        end
+        % Estimating the Z score
+        Z=(D(ind_motif2,ind_motif1)-mean(D_sim))/std(D_sim);
+        % Estimating the P-vlaue
+        pval(ind_motif2,ind_motif1) = 1-normcdf(Z);
+
+    end
+end
+
+% Scaling the similarity between motifs1 and motifs2 by the minimum of their self similarity. 
+Dscaled = D./min(repmat(Dself_PWM_motif2',1,size(D,2)),repmat(Dself_PWM_motif1,size(D,1),1));
+
+% Estimating the q-value.
+[~,qval] = mafdr(pval(:));
+
+[motif2_num,motif1_num] = ind2sub(size(pval),find(qval < qvalue_thresh & Dscaled(:) > Dscaled_thresh));
+
+% for ind_RBP_num = 1:length(RBP_num)
+%     seqlogo(PWM_RBP{RBP_num(ind_RBP_num)})
+% end
+
+
