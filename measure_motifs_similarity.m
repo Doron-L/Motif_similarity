@@ -24,7 +24,6 @@ function [D,Dscaled,pval,qval,motif1_num,motif2_num] = measure_motifs_similarity
 
 
 %% Setting default values
-% only want 3 optional inputs at most
 numvarargs = length(varargin);
 
 % set defaults for optional inputs
