@@ -2,7 +2,8 @@
 
 We estimate the similarity and its significance (Q-value) between two sets of motifs. The similarity is taken to be one minus the Shannon-Jensen distance. More specifically we follow the procedure presented in Itzkovitz et al. 2006, "Coding limits on the number of transcription factors".
 
-Example: \\
+Example: 
+
 PWM_motif1 =  {
 [0.1672  0.0000  0.5615  0.1728  0.2313  0.0000  0.0000  0.0000
 0.8328  0.0964  0.3550  0.0000  0.0000  0.1510  1.0000  0.0847
