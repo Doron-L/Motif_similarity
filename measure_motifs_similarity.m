@@ -45,7 +45,7 @@ function [D,Dscaled,pval,qval,motif1_num,motif2_num] = measure_motifs_similarity
 % 0.5000  0.5000  0.0000  0.2318  0.1297  0.7179  0.0000  0.0000]
 % };
 %
-% [~,~,pval] = measure_motifs_similarity(PWM_motif1,PWM_motif2)
+% [~,~,~,qval] = measure_motifs_similarity(PWM_motif1,PWM_motif2)
 
 %% Setting default values
 % only want 3 optional inputs at most
