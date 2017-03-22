@@ -1,4 +1,4 @@
-function [D,Dscaled,pval,qval,motif1_num,motif2_num] = measure_motifs_similarity(PWM_motif1,PWM_motif2,varargin)
+function [D,Dscaled,pval,qval,motif1_num,motif2_num] = measure_motifs_similarity(PWM_motif_set1,PWM_motif_set2,varargin)
 
 % In this function we estimate the similarity and its significance (P-value) between two sets of motifs. The 
 % similarity is taken to be one minus the Shannon-Jensen distance. More specifically we follow the procedure 
@@ -23,7 +23,7 @@ function [D,Dscaled,pval,qval,motif1_num,motif2_num] = measure_motifs_similarity
 % similar to each other.  
 
 % Example:
-% PWM_motif1 =  {
+% PWM_motif_set1 =  {
 % [0.1672  0.0000  0.5615  0.1728  0.2313  0.0000  0.0000  0.0000
 % 0.8328  0.0964  0.3550  0.0000  0.0000  0.1510  1.0000  0.0847
 % 0.0000  0.5523  0.0835  0.8272  0.0755  0.1512  0.0000  0.9153
@@ -34,7 +34,7 @@ function [D,Dscaled,pval,qval,motif1_num,motif2_num] = measure_motifs_similarity
 % 0.0000  0.0000  0.0000  0.2318  0.1297  0.7179  0.0000  0.0000]
 % };
 % 
-% PWM_motif2 =  {
+% PWM_motif_set2 =  {
 % [0.1672  0.0000  0.5615  0.1728  0.2313  0.0000  0.0000  0.0000
 % 0.8328  0.0964  0.3550  0.0000  0.0000  0.1510  1.0000  0.0847
 % 0.0000  0.5523  0.0835  0.8272  0.0755  0.1512  0.0000  0.9153
@@ -62,43 +62,43 @@ optargs(1:numvarargs) = varargin;
 [Nsim, Sim_flag, Dscaled_thresh, qvalue_thresh] = optargs{:};
 %%
 
-N_PWM_motif1 = length(PWM_motif1);
-N_PWM_motif2 = length(PWM_motif2);
+N_PWM_motif_set1 = length(PWM_motif_set1);
+N_PWM_motif_set2 = length(PWM_motif_set2);
 
 % Estimating the self similarity of motif1.
-Dself_PWM_motif1 = zeros(1,N_PWM_motif1);
-for ind_motif1 = 1:N_PWM_motif1
-    Dself_PWM_motif1(ind_motif1) = compare_two_PSSMs(PWM_motif1{ind_motif1},PWM_motif1{ind_motif1});
+Dself_PWM_motif_set1 = zeros(1,N_PWM_motif_set1);
+for ind_motif_set1 = 1:N_PWM_motif_set1
+    Dself_PWM_motif1(ind_motif_set1) = compare_two_PSSMs(PWM_motif_set1{ind_motif_set1},PWM_motif_set1{ind_motif_set1});
 end
 
 % Estimating the self similarity of motif2.
-Dself_PWM_motif2 = zeros(1,N_PWM_motif2);
-for ind_motif2 = 1:N_PWM_motif2
-    Dself_PWM_motif2(ind_motif2) = compare_two_PSSMs(PWM_motif2{ind_motif2},PWM_motif2{ind_motif2});
+Dself_PWM_motif_set2 = zeros(1,N_PWM_motif_set2);
+for ind_motif_set2 = 1:N_PWM_motif_set2
+    Dself_PWM_motif_set2(ind_motif_set2) = compare_two_PSSMs(PWM_motif_set2{ind_motif_set2},PWM_motif_set2{ind_motif_set2});
 end
 
 D_sim = zeros(1,Nsim);
-for ind_motif2 = 1:N_PWM_motif2
-    for ind_motif1 = 1:N_PWM_motif1
+for ind_motif_set2 = 1:N_PWM_motif_set2
+    for ind_motif_set1 = 1:N_PWM_motif_set1
         
-        D(ind_motif2,ind_motif1) = compare_two_PSSMs(PWM_motif1{ind_motif1},PWM_motif2{ind_motif2});
+        D(ind_motif_set2,ind_motif_set1) = compare_two_PSSMs(PWM_motif_set1{ind_motif_set1},PWM_motif_set2{ind_motif_set2});
         clear D_sim Dscaled_sim
         for ind_sim = 1:Nsim
-            PWM_motif1_sim = make_PWM_realization(PWM_motif1{ind_motif1},Sim_flag);
-            PWM_motif2_sim = make_PWM_realization(PWM_motif2{ind_motif2},Sim_flag);
-            D_sim(ind_sim) = compare_two_PSSMs(PWM_motif1_sim,PWM_motif2_sim);
+            PWM_motif_set1_sim = make_PWM_realization(PWM_motif_set1{ind_motif_set1},Sim_flag);
+            PWM_motif_set2_sim = make_PWM_realization(PWM_motif_set2{ind_motif_set2},Sim_flag);
+            D_sim(ind_sim) = compare_two_PSSMs(PWM_motif_set1_sim,PWM_motif_set2_sim);
             
         end
         % Estimating the Z score
-        Z=(D(ind_motif2,ind_motif1)-mean(D_sim))/std(D_sim);
+        Z=(D(ind_motif_set2,ind_motif_set1)-mean(D_sim))/std(D_sim);
         % Estimating the P-vlaue
-        pval(ind_motif2,ind_motif1) = 1-normcdf(Z);
+        pval(ind_motif_set2,ind_motif_set1) = 1-normcdf(Z);
 
     end
 end
 
 % Scaling the similarity between motifs1 and motifs2 by the minimum of their self similarity. 
-Dscaled = D./min(repmat(Dself_PWM_motif2',1,size(D,2)),repmat(Dself_PWM_motif1,size(D,1),1));
+Dscaled = D./min(repmat(Dself_PWM_motif_set2',1,size(D,2)),repmat(Dself_PWM_motif_set1,size(D,1),1));
 
 % Estimating the q-value.
 [~,qval] = mafdr(pval(:));
