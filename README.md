@@ -4,7 +4,7 @@ We estimate the similarity and its significance (Q-value) between two sets of mo
 
 Example: 
 
-PWM_motif1 =  {  
+PWM_motif_set1 =  {  
 [0.17 0.00 0.56 0.17 0.23 0.00 0.00 0.00  
  0.83 0.10 0.35 0.00 0.00 0.15 1.00 0.08  
  0.00 0.55 0.09 0.83 0.08 0.15 0.00 0.92  
@@ -15,7 +15,7 @@ PWM_motif1 =  {
  0.00 0.00 0.00 0.23 0.13 0.72 0.00 0.00]  
 };
 
-PWM_motif2 =  {  
+PWM_motif_set2 =  {  
 [0.17 0.00 0.56 0.17 0.23 0.00 0.00 0.00  
  0.83 0.10 0.35 0.00 0.00 0.15 1.00 0.08  
  0.00 0.55 0.09 0.83 0.08 0.15 0.00 0.92  
@@ -26,7 +26,7 @@ PWM_motif2 =  {
  0.50 0.50 0.00 0.23 0.13 0.72 0.00 0.00]  
 };
 
-[\~,\~,\~,qval] = measure_motifs_similarity(PWM_motif1,PWM_motif2)
+[\~,\~,\~,qval] = measure_motifs_similarity(PWM_motif_set1,PWM_motif_set2)
 
 qval =
 
