@@ -22,8 +22,33 @@ function [D,Dscaled,pval,qval,motif1_num,motif2_num] = measure_motifs_similarity
 % motif1_num,motif2_num: the indexes of the motifs in the first and second sets that where found significantly 
 % similar to each other.  
 
+% Example:
+% PWM_motif1 =  {
+% [0.1672  0.0000  0.5615  0.1728  0.2313  0.0000  0.0000  0.0000
+% 0.8328  0.0964  0.3550  0.0000  0.0000  0.1510  1.0000  0.0847
+% 0.0000  0.5523  0.0835  0.8272  0.0755  0.1512  0.0000  0.9153
+% 0.0000  0.3513  0.0000  0.0000  0.6933  0.6978  0.0000  0.0000],
+% [0.0000  0.0000  0.7418  0.6715  0.0000  0.0000  0.0828  0.0000
+% 1.0000  0.0000  0.0000  0.0000  0.3364  0.2821  0.3586  0.0000
+% 0.0000  1.0000  0.2582  0.0967  0.5339  0.0000  0.5586  1.0000
+% 0.0000  0.0000  0.0000  0.2318  0.1297  0.7179  0.0000  0.0000]
+% };
+% 
+% PWM_motif2 =  {
+% [0.1672  0.0000  0.5615  0.1728  0.2313  0.0000  0.0000  0.0000
+% 0.8328  0.0964  0.3550  0.0000  0.0000  0.1510  1.0000  0.0847
+% 0.0000  0.5523  0.0835  0.8272  0.0755  0.1512  0.0000  0.9153
+% 0.0000  0.3513  0.0000  0.0000  0.6933  0.6978  0.0000  0.0000],
+% [0.0000  0.0000  0.7418  0.6715  0.0000  0.0000  0.0828  1.0000
+% 0.0000  0.5000  0.0000  0.0000  0.3364  0.2821  0.3586  0.0000
+% 0.5000  0.0000  0.2582  0.0967  0.5339  0.0000  0.5586  0.0000
+% 0.5000  0.5000  0.0000  0.2318  0.1297  0.7179  0.0000  0.0000]
+% };
+%
+% [~,~,pval] = measure_motifs_similarity(PWM_motif1,PWM_motif2)
 
 %% Setting default values
+% only want 3 optional inputs at most
 numvarargs = length(varargin);
 
 % set defaults for optional inputs
@@ -80,6 +105,7 @@ Dscaled = D./min(repmat(Dself_PWM_motif2',1,size(D,2)),repmat(Dself_PWM_motif1,s
 
 [motif2_num,motif1_num] = ind2sub(size(pval),find(qval < qvalue_thresh & Dscaled(:) > Dscaled_thresh));
 
+qval = reshape(qval,size(pval));
 % for ind_RBP_num = 1:length(RBP_num)
 %     seqlogo(PWM_RBP{RBP_num(ind_RBP_num)})
 % end
