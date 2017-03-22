@@ -1,3 +1,33 @@
 # Motif similarity
 
-We estimate the similarity and its significance (P-value) between two sets of motifs. The similarity is taken to be one minus the Shannon-Jensen distance. More specifically we follow the procedure presented in Itzkovitz et al. 2006, "Coding limits on the number of transcription factors".
+We estimate the similarity and its significance (Q-value) between two sets of motifs. The similarity is taken to be one minus the Shannon-Jensen distance. More specifically we follow the procedure presented in Itzkovitz et al. 2006, "Coding limits on the number of transcription factors".
+
+Example:
+PWM_motif1 =  {
+[0.1672  0.0000  0.5615  0.1728  0.2313  0.0000  0.0000  0.0000
+0.8328  0.0964  0.3550  0.0000  0.0000  0.1510  1.0000  0.0847
+0.0000  0.5523  0.0835  0.8272  0.0755  0.1512  0.0000  0.9153
+0.0000  0.3513  0.0000  0.0000  0.6933  0.6978  0.0000  0.0000],
+[0.0000  0.0000  0.7418  0.6715  0.0000  0.0000  0.0828  0.0000
+1.0000  0.0000  0.0000  0.0000  0.3364  0.2821  0.3586  0.0000
+0.0000  1.0000  0.2582  0.0967  0.5339  0.0000  0.5586  1.0000
+0.0000  0.0000  0.0000  0.2318  0.1297  0.7179  0.0000  0.0000]
+};
+
+PWM_motif2 =  {
+[0.1672  0.0000  0.5615  0.1728  0.2313  0.0000  0.0000  0.0000
+0.8328  0.0964  0.3550  0.0000  0.0000  0.1510  1.0000  0.0847
+0.0000  0.5523  0.0835  0.8272  0.0755  0.1512  0.0000  0.9153
+0.0000  0.3513  0.0000  0.0000  0.6933  0.6978  0.0000  0.0000],
+[0.0000  0.0000  0.7418  0.6715  0.0000  0.0000  0.0828  1.0000
+0.0000  0.5000  0.0000  0.0000  0.3364  0.2821  0.3586  0.0000
+0.5000  0.0000  0.2582  0.0967  0.5339  0.0000  0.5586  0.0000
+0.5000  0.5000  0.0000  0.2318  0.1297  0.7179  0.0000  0.0000]
+};
+
+[~,~,~,qval] = measure_motifs_similarity(PWM_motif1,PWM_motif2)
+
+qval =
+
+    0.0001    0.0002
+    0.0001    0.0016
