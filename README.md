@@ -25,7 +25,7 @@ PWM_motif2 =  {
 0.5000  0.5000  0.0000  0.2318  0.1297  0.7179  0.0000  0.0000]
 };
 
-[~,~,~,qval] = measure_motifs_similarity(PWM_motif1,PWM_motif2)
+[\~,\~,\~,qval] = measure_motifs_similarity(PWM_motif1,PWM_motif2)
 
 qval =
 
