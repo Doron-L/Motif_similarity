@@ -7,7 +7,7 @@ function [D,Dscaled,pval,qval,motif1_num,motif2_num] = measure_motifs_similarity
 % Input:
 % -----
 % PWM_motif1: is a cell array of Position Weight Matrix (PWM) of the first motif set. Its length is the number of 
-% motifs. Each cell is an n X m matrix, where the number of row is the number of different options each element 
+% motifs,k. Each cell is an n X m matrix, where the number of rows is the number of different options each element 
 % can have (for example, for nucleotides there are 4 options (A, T, C, and G)), and the number of columns is the 
 % number of the motif's base number. In each column, we have the probability for each element kind to be in this 
 % position. The sum of each column must give 1.
@@ -15,8 +15,8 @@ function [D,Dscaled,pval,qval,motif1_num,motif2_num] = measure_motifs_similarity
 % motif set. Its structure is exactly as the motif1 structure, though its length may be different.
 
 % Output:
-% D: the similarity n X m matrix, where n is for the different motifs in set 1 and m is for the different motifs 
-% in set 1.
+% D: the similarity k1 X k2 matrix, where k1 is for the different motifs in set 1 and k2 is for the different motifs 
+% in set 2.
 % Dscaled: is the scaled similarity between motifs1 and motifs2 by the minimum of their self similarity. 
 % pval and qval: are the significance of the values in the D matrix in P-values and q-values, respectively.
 % motif1_num,motif2_num: the indexes of the motifs in the first and second sets that where found significantly 
@@ -47,8 +47,9 @@ function [D,Dscaled,pval,qval,motif1_num,motif2_num] = measure_motifs_similarity
 %
 % [~,~,~,qval] = measure_motifs_similarity(PWM_motif1,PWM_motif2)
 
-%% Setting default values
-% only want 3 optional inputs at most
+%% Setting default values for the input
+% The default input is set for:
+% Nsim, Sim_flag, Dscaled_thresh, qvalue_thresh
 numvarargs = length(varargin);
 
 % set defaults for optional inputs
@@ -62,6 +63,7 @@ optargs(1:numvarargs) = varargin;
 [Nsim, Sim_flag, Dscaled_thresh, qvalue_thresh] = optargs{:};
 %%
 
+% Finding the number of motifs in each set.
 N_PWM_motif_set1 = length(PWM_motif_set1);
 N_PWM_motif_set2 = length(PWM_motif_set2);
 
